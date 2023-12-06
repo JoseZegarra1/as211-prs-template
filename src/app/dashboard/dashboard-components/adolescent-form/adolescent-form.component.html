@@ -1,0 +1,53 @@
+
+
+<div class="adolescent-form" style="max-width: 600px; margin: 20px auto; padding: 20px; background-color: #f7f7f7; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+    <h2 style="font-size: 24px; margin-bottom: 20px; color: #333;">Registrar Nuevo programa</h2>
+    <form class="registration-form" style="display: grid; gap: 20px;" (submit)="submitForm()">
+      <div class="form-group">
+        <label for="name" style="font-size: 16px; color: #555;">Nombre:</label>
+        <input type="text" id="name" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.name" name="name" required pattern="^[A-Za-z\s]+$">
+        <!-- La restricción pattern permite solo letras y espacios -->
+      </div>
+  
+      <div class="form-group">
+        <label for="type" style="font-size: 16px; color: #555;">Tipo:</label>
+        <input type="text" id="type" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.type" name="type" required pattern="^[A-Za-z\s]+$">
+        <!-- La restricción pattern permite solo letras y espacios -->
+      </div>
+  
+      <div class="form-group">
+        <label for="beneficiary" style="font-size: 16px; color: #555;">Beneficiado:</label>
+        <input type="text" id="beneficiary" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.beneficiary" name="beneficiary" required pattern="^[A-Za-z\s]+$">
+        <!-- La restricción pattern permite solo letras y espacios -->
+      </div>
+  
+      <div class="form-group">
+        <label for="responsible" style="font-size: 16px; color: #555;">Responsable:</label>
+        <input type="text" id="responsible" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.responsible" name="responsible" required pattern="^[A-Za-z\s]+$">
+        <!-- La restricción pattern permite solo letras y espacios -->
+      </div>
+  
+      <div class="form-group">
+        <label for="description" style="font-size: 16px; color: #555;">Descripcion:</label>
+        <input type="text" id="description" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.description" name="description" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="duration" style="font-size: 16px; color: #555;">Duracion:</label>
+        <input type="text" id="duration" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.duration" name="duration" required pattern="^[0-9]+$">
+        <!-- La restricción pattern permite solo números -->
+      </div>
+      <div class="form-group">
+        <label for="level" style="font-size: 16px; color: #555;">level:</label>
+        <input type="text" id="lvel" class="form-control" style="width: 96%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px;" [(ngModel)]="newAdolescent.level" name="level" required>
+        <!-- La restricción pattern permite solo números -->
+      </div>
+  
+  
+      
+  
+  
+      <button type="submit" class="btn btn-primary" style="background-color: #007bff; color: #fff; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease-in-out; font-size: 16px;">Registrar</button>
+    </form>
+  </div>
+  
