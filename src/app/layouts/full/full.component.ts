@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { LoginService } from 'src/app/login/services/login.services';
 
 interface sidebarMenu {
   link: string;
@@ -24,7 +25,7 @@ export class FullComponent {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver) { }
+  constructor(private breakpointObserver: BreakpointObserver, private loginservice : LoginService) { }
 
   routerActive: string = "activelink";
 
@@ -144,4 +145,11 @@ export class FullComponent {
     this.showBarInfo = !this.showBarInfo;
   }
 
+  login(){
+    this.loginservice.login();
+  }
+
+  logout(){
+    this.loginservice.logout();
+  }
 }
