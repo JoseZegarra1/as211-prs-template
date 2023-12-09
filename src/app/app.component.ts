@@ -1,6 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SheetService } from './services/sheet.service';
+import { AuthConfig, NullValidationHandler, OAuthService } from 'angular-oauth2-oidc';
+import { LoginService } from './login/services/login.services';
+import { MenssageService } from './login/services/message.service';
 
 interface CodigoToPalabraMapping {
   [codigo: string]: string;
@@ -11,7 +14,7 @@ interface CodigoToPalabraMapping {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   dataBD: any;
   dataANX1E: any;
   dataANX1: any;
@@ -27,6 +30,8 @@ export class AppComponent implements OnInit{
   selectedExpediente: string = '';
   showTable: boolean = false;
   dataExp: any;
+
+  isAdmin!: boolean;
 
   codigoToPalabra: CodigoToPalabraMapping = {
     'ANX00': 'FICHA DE INGRESO',
@@ -49,15 +54,48 @@ export class AppComponent implements OnInit{
   };
 
   title = 'flexy-angular';
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private service: SheetService) { }
-  ngOnInit(): void { }
-
-  cambiarFiltro(): void {
-    this.nuevaBusqueda();
+  constructor(
+    private cdr: ChangeDetectorRef, 
+    private http: HttpClient, 
+    private service: SheetService, 
+    // private oauthService: OAuthService,
+    // private messageService: MenssageService,
+    // private loginService: LoginService
+    ) {
+    // this.configure();
   }
 
-  realizarBusqueda(): void {
-    if (this.searchTerm.length === 8) {
+
+  ngOnInit(): void { }
+
+  authConfig: AuthConfig = {
+    issuer: 'http://localhost:8080/realms/PRS_Trans_Dist.',
+    redirectUri: window.location.origin,
+    clientId: 'dashboard',
+    responseType: 'code',
+    scope: 'openid profile email offline_access',
+    showDebugInformation: true,
+  };
+
+  // configure(): void {
+  //   this.oauthService.configure(this.authConfig);
+  //   this.oauthService.tokenValidationHandler = new NullValidationHandler();
+  //   this.oauthService.setupAutomaticSilentRefresh();
+  //   this.oauthService.loadDiscoveryDocument().then(() => this.oauthService.tryLogin())
+  //     .then(() => {
+  //       if (this.oauthService.hasValidIdToken()) {
+  //         this.isAdmin = this.loginService.getIsAdmin();
+  //         const username = this.oauthService.getIdentityClaims()['preferred_username']
+  //         this.messageService.sendMessage(username, this.loginService.getIsLoggerd());
+  //       }
+  //     });
+
+    cambiarFiltro(): void {
+      this.nuevaBusqueda();
+    }
+
+    realizarBusqueda(): void {
+      if(this.searchTerm.length === 8) {
       this.service.getInfoFlag(parseInt(this.searchTerm, 10), this.filterFlag).subscribe({
         next: (sheetData) => {
           console.log(sheetData);
