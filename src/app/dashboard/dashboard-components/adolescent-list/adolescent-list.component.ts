@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AdolescentService } from 'src/app/adolescent.service';
 import { Router } from '@angular/router';
+import { DatePipe } from '@angular/common';
+
 
 @Component({
   selector: 'app-adolescent-list',
   templateUrl: './adolescent-list.component.html',
-  styleUrls: ['./adolescent-list.component.scss']
+  styleUrls: ['./adolescent-list.component.scss'],
+  providers: [DatePipe],
 })
 export class AdolescentListComponent implements OnInit {
   adolescents: any[] = [];
@@ -17,6 +20,8 @@ export class AdolescentListComponent implements OnInit {
   nameFilter: string = '';
   reportFormat: string = 'pdf';
   reportResult: string = '';
+  levelFilter: string = '';
+
 
   constructor(private adolescentService: AdolescentService, private router: Router) { }
 
@@ -25,7 +30,7 @@ export class AdolescentListComponent implements OnInit {
       (data) => {
         this.adolescents = data;
         this.filteredAdolescents = data; // Agrega esta línea
-        this.generateReport(); 
+        
       },
       (error) => {
         console.error('Error al obtener la lista de adolescentes:', error);
@@ -55,12 +60,18 @@ export class AdolescentListComponent implements OnInit {
 
   openEditForm(adolescent: any): void {
     this.editedAdolescent = { ...adolescent };
+    this.editedAdolescent.startDate = this.formatDate(this.editedAdolescent.startDate);
+    this.editedAdolescent.endDate = this.formatDate(this.editedAdolescent.endDate);
     this.showEditForm = true;
+    console.log('Open Edit Form - Edited Adolescent:', this.editedAdolescent);
+
   }
 
   closeEditForm(): void {
-    this.showEditForm = false;
+    this.showEditForm = true;
     this.editedAdolescent = {}; // Limpiar los datos editados
+    console.log('Close Edit Form - Edited Adolescent:', this.editedAdolescent);
+
   }
 
   navigateToAdolescentForm(): void {
@@ -68,16 +79,30 @@ export class AdolescentListComponent implements OnInit {
   }
   
 
+  formatDate(dateString: string): string {
+    const [day, month, year] = dateString.split('-');
+    return `${year}-${month}-${day}`;
+  }
+  
   saveEditedAdolescent(): void {
+    // Formatea las fechas antes de enviarlas al backend
+    this.editedAdolescent.startDate = this.formatDate(this.editedAdolescent.startDate);
+    this.editedAdolescent.endDate = this.formatDate(this.editedAdolescent.endDate);
+  
     this.adolescentService.updateAdolescent(this.editedAdolescent.id, this.editedAdolescent).subscribe(() => {
       this.showEditForm = false;
       this.editedAdolescent = {};
       this.adolescentService.getAdolescentList().subscribe(data => {
-         this.adolescents = data;
-       });
+        this.adolescents = data;
+      });
     });
+    console.log('Save Edited Adolescent - Edited Adolescent:', this.editedAdolescent);
   }
+  
+  
 
+  
+  
   generateReport(): void {
     this.adolescentService.generateReport(this.reportFormat).subscribe(
       (result) => {
@@ -102,7 +127,28 @@ export class AdolescentListComponent implements OnInit {
       });
     }
   }
+  convertirFecha(fechaString: string): Date {
+    
+    const [day, month, year] = fechaString.split('-').map(Number);
+    
+    return new Date(year, month - 1, day); // El mes en JavaScript es 0-indexado
+    
+  }
 
+
+  convertirFechaParaBackend(fechaString: string): string {
+    if (!fechaString) {
+      return '';  // o manejarlo según tu lógica
+    }
+  
+    const [day, month, year] = fechaString.split('/').map(Number);
+    return `${day}-${month}-${year}`;
+  }
+  
+  
+
+  
+  
 
   restoreAdolescent(id: number): void {
     const confirmRestore = confirm('¿Estás seguro de que deseas restaurar este adolescente?');
@@ -127,6 +173,7 @@ export class AdolescentListComponent implements OnInit {
   }
 
 
+
   filterAdolescentsByName(): void {
     console.log('Filtrando por nombre:', this.nameFilter);
   
@@ -139,10 +186,19 @@ export class AdolescentListComponent implements OnInit {
       this.filteredAdolescents = this.adolescents.slice();
     }
   }
+
+  filterAdolescentsByLevel(): void {
+    console.log('Filtrando por nivel:', this.levelFilter);
   
-
-
-
+    if (this.levelFilter) {
+      this.filteredAdolescents = this.adolescents.filter(adolescent =>
+        adolescent.level.toLowerCase() === this.levelFilter.toLowerCase()
+      );
+    } else {
+      // Si el filtro de nivel está vacío, resetea la lista al estado original
+      this.filteredAdolescents = this.adolescents.slice();
+    }
+  }
 
 }
 

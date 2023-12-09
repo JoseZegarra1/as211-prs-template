@@ -1,56 +1,78 @@
 
-<h2>Lista de Programas:</h2>
+<div style="text-align: left; padding: 20px;">
+  <h2 style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 50px;">LISTA DE PROGRAMAS</h2>
+</div>
+
 <div class="filter-section">
   
-  <button class="agregar-btn-verde" (click)="navigateToAdolescentForm()">Agregar Programa</button>
+  <button class="agregar-btn-verde" (click)="navigateToAdolescentForm()">AGREGAR PROGRAMA</button>
 
-    <label>FILTRO POR:</label>
-    <select [(ngModel)]="filterByStatus" (ngModelChange)="filterAdolescentsByStatus()">
-      <option value="A">Activos</option>
-      <option value="I">Inactivos</option>
-    </select>
-
-    <button class="agregar-btn-report" (click)="generateReport()">DESCARGAR REPORTE</button>
+  <button class="agregar-btn-report" (click)="generateReport()" style="margin-left: auto;">DESCARGAR REPORTE</button>
     
   </div>
-  <mat-form-field class="me-24 fs-16" appearance="fill">
-    <mat-label>Filtro de Nombre del Programa</mat-label>
-    <input matInput type="text" [(ngModel)]="nameFilter" (input)="filterAdolescentsByName()">
+  <div class="filter-section">
+    <mat-form-field class="me-24 fs-16" appearance="fill">
+      <mat-label>FILTRO DE NOMBRE DEL PROGRAMA</mat-label>
+      <input matInput type="text" [(ngModel)]="nameFilter" (input)="filterAdolescentsByName()">
+    </mat-form-field>
+  
+    <mat-form-field class="me-24 fs-16" appearance="fill">
+      <mat-label>FILTRO DE NIVEL DEL PROGRAMA</mat-label>
+      <mat-select [(ngModel)]="levelFilter" (ngModelChange)="filterAdolescentsByLevel()">
+        <mat-option value="">TODOS</mat-option>
+        <mat-option value="S">SOA</mat-option>
+        <mat-option value="P">PRONACEJ</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="me-24 fs-16" appearance="fill">
+    <mat-label>FILTRO POR ESTADOS:</mat-label>
+    <mat-select [(ngModel)]="filterByStatus" (ngModelChange)="filterAdolescentsByStatus()">
+      <mat-option value="A">ACTIVOS</mat-option>
+      <mat-option value="I">INACTIVOS</mat-option>
+    </mat-select>
   </mat-form-field>
-
-
+  </div>
+  
   
   <div class="adolescent-list">
     
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>NOMBRE</th>
-
-  
-  
-          <th style="padding: 8px; text-align: left;">TIPO</th>
-          <th style="padding: 8px; text-align: left;">BENEFICIARIO</th>
-          <th style="padding: 8px; text-align: left;">RESPONSABLE</th>
-          <th style="padding: 8px; text-align: left;">DESCRIPCION</th>
-          <th style="padding: 8px; text-align: left;">DURACION</th>
-          
-          <th style="padding: 8px; text-align: left;">NIVEL</th>
+          <th style="padding: 8px; text-align: center;">ID</th>
+          <th style="padding: 8px; text-align: center;">NOMBRE</th>
+          <th style="padding: 8px; text-align: center;">TIPO</th>
+          <th style="padding: 8px; text-align: center;">BENEFICIARIO</th>
+          <th style="padding: 8px; text-align: center;">RESPONSABLE</th>
+          <th style="padding: 8px; text-align: center;">DURACION</th>
+          <th style="padding: 8px; text-align: center;">NIVEL</th>
+          <th style="padding: 8px; text-align: center;">INICIO</th>
+          <th style="padding: 8px; text-align: center;">FIN</th>
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let adolescent of filteredAdolescents">
-          <tr *ngIf="!nameFilter || (adolescent.name.toLowerCase().includes(nameFilter.toLowerCase()))">
 
-      <td>{{ adolescent.id }}</td>
-      <td>{{ adolescent.name }}</td>
-      <td>{{ adolescent.type }}</td>
-      <td>{{ adolescent.beneficiary }}</td>
-      <td>{{ adolescent.responsible }}</td>
-      <td>{{ adolescent.description }}</td>
-      <td>{{ adolescent.duration }}<label> meses</label></td>
-      <td>{{ adolescent.level }}</td>
+        <ng-container *ngFor="let adolescent of filteredAdolescents">
+          <tr *ngIf="(!nameFilter || adolescent.name.toLowerCase().includes(nameFilter.toLowerCase())) && 
+                     (!levelFilter || adolescent.level.toLowerCase() === levelFilter.toLowerCase())">
+          
+        <td  style="text-align: center;">{{ adolescent.id }}</td>
+      <td  style="text-align: center;">{{ adolescent.name }}</td>
+      <td  style="text-align: center;">{{ adolescent.type }}</td>
+      <td  style="text-align: center;">{{ adolescent.beneficiary }}</td>
+      <td  style="text-align: center;">{{ adolescent.responsible }}</td>
+
+      <td  style="text-align: center;" [ngClass]="{'text-red': adolescent.duration <= 15}">
+        {{ adolescent.duration }}<label> días</label>
+      </td>
+      
+      <td style="text-align: center;">
+        {{ adolescent.level === 'S' ? 'SOA' : (adolescent.level === 'P' ? 'PRONACEJ' : adolescent.level) }}
+      </td>
+      <td style="width: 150px; text-align: center;">{{ convertirFecha(adolescent.startDate) | date:'dd MMM yyyy' }}</td>
+      <td style="width: 150px; text-align: center;">{{ convertirFecha(adolescent.endDate) | date:'dd MMM yyyy' }}</td>
+        
           <td style="padding: 8px; text-align: left;">
             <button class="btn-edit" (click)="openEditForm(adolescent)">Editar</button>
           </td>
@@ -74,32 +96,27 @@
       <div class="edit-form">
         <h3>Editar Adolescente</h3>
         <form>
-          <label>Nombre:</label>
+          <label>NOMBRE:</label>
           <input type="text" [(ngModel)]="editedAdolescent.name" name="name">
   
-          <label>type:</label>
+          <label>TIPO:</label>
           <input type="text" [(ngModel)]="editedAdolescent.type" name="type">
   
-          <label>beneficiary:</label>
+          <label>BENEFICIARIO:</label>
           <input type="text" [(ngModel)]="editedAdolescent.beneficiary" name="beneficiary">
   
-          <label>responsible:</label>
+          <label>RESPONSABLE:</label>
           <input type="text" [(ngModel)]="editedAdolescent.responsible" name="responsible">
-  
-          <label>description:</label>
-          <input type="text" [(ngModel)]="editedAdolescent.description" name="description">
-  
-  
-  
-          <label>duration:</label>
-          <input type="text" [(ngModel)]="editedAdolescent.duration" name="duration">
-  
-          <label>condition:</label>
-          <input type="text" [(ngModel)]="editedAdolescent.condition" name="condition">
-  
+          
+          <label>INICIO DEL PROGRAMA:</label>
+          <input type="date" [(ngModel)]="editedAdolescent.startDate" name="startDate" format="yyyy-MM-dd">
+                    
+          <label>FIN DEL PROGRAMA:</label>
+          <input type="date" [(ngModel)]="editedAdolescent.endDate" name="endDate" format="yyyy-MM-dd">
+          
           <div class="form-group">
-            <button type="button" (click)="closeEditForm()" class="btn btn-secondary">Cancelar</button>
-            <button type="button" (click)="saveEditedAdolescent()" class="btn btn-primary">Guardar</button>
+            <button type="button" (click)="closeEditForm()" class="btn btn-secondary">LIMPIAR</button>
+            <button type="button" (click)="saveEditedAdolescent()" class="btn btn-primary">GUARDAR CAMBIO</button>
           </div>
         </form>
       </div>

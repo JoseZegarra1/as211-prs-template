@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AdolescentService } from 'src/app/adolescent.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-adolescent-form',
@@ -11,7 +12,16 @@ export class AdolescentFormComponent {
     condition: 'A'
   };
 
-  constructor(private adolescentService: AdolescentService) { }
+  constructor(private adolescentService: AdolescentService, private router: Router) { }
+
+  formatDate(dateString: string): string {
+    const [day, month, year] = dateString.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  navigateToAdolescentList(): void {
+    this.router.navigate(['/adolescent-list']);
+  }
 
   submitForm() {
     // Validar que los campos no contengan números
@@ -22,11 +32,9 @@ export class AdolescentFormComponent {
       return;
     }
 
-    // Validar que el campo "duration" solo contenga números
-    if (!/^\d+$/.test(this.newAdolescent.duration)) {
-      alert('El campo Duration solo debe contener números.');
-      return;
-    }
+    this.newAdolescent.startDate = this.formatDate(this.newAdolescent.startDate);
+    this.newAdolescent.endDate = this.formatDate(this.newAdolescent.endDate);
+
 
     this.adolescentService.saveAdolescent(this.newAdolescent).subscribe(() => {
       this.newAdolescent = {
