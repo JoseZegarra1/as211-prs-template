@@ -14,7 +14,7 @@ import { DemoFlexyModule } from './demo-flexy-module'
 import { DashboardModule } from './dashboard/dashboard.module';
 import { ComponentsModule } from './components/components.module';
 import { HttpClientModule } from '@angular/common/http';
-import {NgOptimizedImage} from "@angular/common";
+import { NgOptimizedImage } from "@angular/common";
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
@@ -24,33 +24,40 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { NgChartsModule } from 'ng2-charts';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 @NgModule({
   declarations: [
     AppComponent,
     FullComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        FeatherModule.pick(allIcons),
-        DemoFlexyModule,
-        DashboardModule,
-        ComponentsModule,
-        FormsModule,
-        HttpClientModule,
-        MatPaginatorModule,
-        MatInputModule,
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    FeatherModule.pick(allIcons),
+    DemoFlexyModule,
+    DashboardModule,
+    ComponentsModule,
+    FormsModule,
+    HttpClientModule,
+    MatPaginatorModule,
+    MatInputModule,
     MatButtonModule,
     MatTableModule,
     MatToolbarModule,
     MatCardModule,
     MatSelectModule,
-        MatIconModule,
-        NgOptimizedImage, 
-        NgChartsModule
-    ],
+    MatIconModule,
+    NgOptimizedImage,
+    NgChartsModule,
+    OAuthModule.forRoot({
+      resourceServer: {
+        allowedUrls: ['http://localhost:8082/'],
+        sendAccessToken: true
+      }
+    })
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
